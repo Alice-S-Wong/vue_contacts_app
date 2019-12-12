@@ -14,9 +14,20 @@
       <p>First Name: {{contact.first_name}}</p>
       <p>Middle Name: {{contact.middle_name}}</p>
       <p>Last Name: {{contact.last_name}}</p>
-      <p>Email: {{contact.email}}</p>
-      <p>Phone Number: {{contact.phone_number}}</p>
-      <p>Bio: {{contact.bio}}</p>
+      <button v-on:click="toggleInfo(contact)">Show Info</button>
+      <div v-if="currentContact === contact">
+        <p>Email: {{contact.email}}</p>
+        <p>Phone Number: {{contact.phone_number}}</p>
+        <p>Bio: {{contact.bio}}</p>
+        <p>Update Contact</p>
+        <p>First Name: <input type="text" v-model="contact.first_name"></p>
+        <p>Middle Name: <input type="text" v-model="contact.middle_name"></p>
+        <p>Last Name: <input type="text" v-model="contact.last_name"></p>
+        <p>Email: <input type="text" v-model="contact.email"></p>
+        <p>Phone Number: <input type="text" v-model="contact.phone_number"></p>
+        <p>Bio: <input type="text" v-model="contact.bio"></p>
+        <button v-on:click="updateContact(contact)">Update Contact</button>
+      </div>
       <hr>
     </div>
   </div>
@@ -38,7 +49,8 @@ export default {
       newLastName: "",
       newEmail: "",
       newPhoneNumber: "",
-      newBio: ""
+      newBio: "",
+      currentContact: {}
     };
   },
   created: function() {
@@ -65,6 +77,27 @@ export default {
         this.newEmail = "";
         this.newPhoneNumber = "";
         this.newBio = "";
+      });
+    },
+    toggleInfo: function(theContact) {
+      if (this.currentContact === theContact) {
+        this.currentContact = null;
+      } else {
+        this.currentContact = theContact;
+      }
+    },
+    updateContact: function(theContact) {
+      var params = {
+        first_name: theContact.first_name,
+        middle_name: theContact.middle_name,
+        last_name: theContact.last_name,
+        email: theContact.email,
+        phone_number: theContact.phone_number,
+        bio: theContact.bio
+      };
+      console.log(params);
+      axios.patch(`/api/contacts/${theContact.id}`, params).then(response => {
+        console.log(response.data);
       });
     }
   }
